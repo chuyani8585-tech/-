@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>一桿稱仔：救援秦得參</title>
+<style>
+  :root{
+    --paper:#ece2cc;
+    --paper-dark:#ddcfab;
+    --paper-line:#c9b98f;
+    --ink:#2b2420;
+    --ink-soft:#5a4d3c;
+    --indigo:#32475e;
+    --indigo-deep:#1f2e3d;
+    --seal:#8b2e2e;
+    --seal-dark:#6e2222;
+    --brass:#a9825a;
+    --positive:#4c6b3e;
+    --negative:#8b2e2e;
+    --focus:#2e6f8e;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#201b16;
+      --paper-dark:#17130f;
+      --paper-line:#3a3127;
+      --ink:#ece2cc;
+      --ink-soft:#c9b98f;
+      --indigo:#7fa0bf;
+      --indigo-deep:#9fc3e6;
+      --seal:#d96b6b;
+      --seal-dark:#e38a8a;
+      --brass:#c79f72;
+      --positive:#7fae6a;
+      --negative:#d96b6b;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#201b16;
+    --paper-dark:#17130f;
+    --paper-line:#3a3127;
+    --ink:#ece2cc;
+    --ink-soft:#c9b98f;
+    --indigo:#7fa0bf;
+    --indigo-deep:#9fc3e6;
+    --seal:#d96b6b;
+    --seal-dark:#e38a8a;
+    --brass:#c79f72;
+    --positive:#7fae6a;
+    --negative:#d96b6b;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0;
+    background:var(--paper-dark);
+    color:var(--ink);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei","Heiti TC",sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.serif{
+    font-family:"Noto Serif TC","Songti TC","PMingLiU","STSong",serif;
+  }
+  a{color:var(--indigo);}
+  button{font-family:inherit;}
+
+  .app{
+    max-width:880px;
+    margin:0 auto;
+    padding:28px 18px 80px;
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    display:flex; align-items:center; gap:18px;
+    border-bottom:3px solid var(--ink);
+    padding-bottom:14px;
+    margin-bottom:22px;
+  }
+  .seal{
+    flex:0 0 auto;
+    width:58px; height:58px;
+    border-radius:50%;
+    border:3px solid var(--seal);
+    color:var(--seal);
+    display:flex; align-items:center; justify-content:center;
+    font-size:28px; font-weight:700;
+    transform:rotate(-8deg);
+    font-family:"Noto Serif TC",serif;
+  }
+  .masthead-text .kicker{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    letter-spacing:.08em;
+    margin:0 0 2px;
+  }
+  .masthead-text h1{
+    margin:0;
+    font-size:clamp(22px,4.6vw,32px);
+    letter-spacing:.03em;
+  }
+  .masthead-text .subtitle{
+    margin:4px 0 0;
+    font-size:14px;
+    color:var(--ink-soft);
+  }
+  .theme-toggle{
+    margin-left:auto;
+    flex:0 0 auto;
+    background:none;
+    border:1px solid var(--ink-soft);
+    color:var(--ink-soft);
+    border-radius:999px;
+    padding:6px 12px;
+    font-size:12.5px;
+    cursor:pointer;
+  }
+  .theme-toggle:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:3px solid var(--focus);
+    outline-offset:2px;
+  }
+
+  /* ---------- Progress dots ---------- */
+  .progress{
+    display:flex; gap:6px; flex-wrap:wrap;
+    margin-bottom:18px;
+  }
+  .progress .dot{
+    width:16px; height:16px; border-radius:50%;
+    border:2px solid var(--ink-soft);
+    background:transparent;
+    display:flex;align-items:center;justify-content:center;
+    font-size:9px;color:var(--ink-soft);
+  }
+  .progress .dot.done{ background:var(--brass); border-color:var(--brass); color:var(--paper); }
+  .progress .dot.current{ border-color:var(--seal); box-shadow:0 0 0 3px rgba(139,46,46,.18); }
+
+  /* ---------- Stat dashboard (the scale) ---------- */
+  .dash{
+    background:var(--paper);
+    border:1px solid var(--ink-soft);
+    border-radius:4px;
+    padding:16px 18px 10px;
+    margin-bottom:20px;
+  }
+  .dash-title{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin:0 0 10px;
+    display:flex; justify-content:space-between; align-items:baseline;
+  }
+  .stat-row{
+    display:grid;
+    grid-template-columns:72px 1fr 44px;
+    gap:10px;
+    align-items:center;
+    margin-bottom:10px;
+  }
+  .stat-label{ font-size:13.5px; }
+  .stat-track{
+    position:relative;
+    height:12px;
+    background:var(--paper-dark);
+    border:1px solid var(--paper-line);
+    border-radius:2px;
+    background-image:linear-gradient(to right, var(--paper-line) 1px, transparent 1px);
+    background-size:10% 100%;
+    overflow:hidden;
+  }
+  .stat-track .center-line{
+    position:absolute; left:50%; top:-2px; bottom:-2px; width:1.5px;
+    background:var(--ink-soft);
+  }
+  .stat-fill{
+    position:absolute; top:0; bottom:0;
+    transition:left .5s ease, width .5s ease, background-color .5s ease;
+  }
+  .stat-value{
+    font-size:12.5px; text-align:right; color:var(--ink-soft); font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- Panel (document card) ---------- */
+  .panel{
+    background:var(--paper);
+    border:1px solid var(--ink-soft);
+    border-left:5px solid var(--indigo);
+    border-radius:3px;
+    padding:22px 22px 18px;
+    margin-bottom:20px;
+  }
+  .panel h2{
+    margin:0 0 4px;
+    font-size:20px;
+  }
+  .panel .stage-tag{
+    font-size:12.5px;
+    color:var(--seal);
+    margin:0 0 10px;
+  }
+  .narrative{
+    font-size:16px;
+    max-width:62ch;
+  }
+  .narrative .quote{
+    display:block;
+    margin:10px 0;
+    padding:8px 14px;
+    border-left:3px solid var(--brass);
+    color:var(--ink-soft);
+    font-style:normal;
+  }
+
+  .qblock{
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px dashed var(--paper-line);
+  }
+  .qblock .qlabel{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:0 0 8px;
+  }
+  .qprompt{ font-size:15.5px; margin:0 0 10px; font-weight:600; }
+  .options{ display:flex; flex-direction:column; gap:8px; }
+  .options.perspective-row{ flex-direction:row; flex-wrap:wrap; }
+  .options.perspective-row .opt-btn{ flex:1 1 180px; text-align:center; }
+  .perspective-note{ font-size:12.5px; color:var(--ink-soft); margin:10px 0 8px; }
+  .opt-btn{
+    text-align:left;
+    background:var(--paper-dark);
+    border:1px solid var(--paper-line);
+    border-radius:3px;
+    padding:10px 14px;
+    font-size:14.5px;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .opt-btn:hover{ border-color:var(--indigo); }
+  .opt-btn.selected{ border-color:var(--indigo); background:var(--paper); }
+  .opt-btn.correct{ border-color:var(--positive); background:color-mix(in srgb, var(--positive) 14%, var(--paper)); }
+  .opt-btn.wrong{ border-color:var(--negative); background:color-mix(in srgb, var(--negative) 14%, var(--paper)); }
+  .opt-btn:disabled{ cursor:default; }
+
+  .reveal{
+    margin-top:12px;
+    padding:12px 14px;
+    background:var(--paper-dark);
+    border-radius:3px;
+    font-size:14.5px;
+  }
+  .reveal .match{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin-top:6px;
+  }
+  .delta-list{
+    display:flex; flex-wrap:wrap; gap:8px;
+    margin-top:8px;
+    font-size:12.5px;
+  }
+  .delta-chip{
+    padding:2px 8px;
+    border-radius:999px;
+    border:1px solid var(--paper-line);
+  }
+  .delta-chip.up{ color:var(--positive); border-color:var(--positive); }
+  .delta-chip.down{ color:var(--negative); border-color:var(--negative); }
+
+  .actions{
+    display:flex; justify-content:flex-end; gap:10px;
+    margin-top:18px;
+  }
+  .btn{
+    border:none; border-radius:3px;
+    padding:11px 20px;
+    font-size:14.5px;
+    cursor:pointer;
+  }
+  .btn-primary{ background:var(--indigo); color:var(--paper); }
+  .btn-primary:disabled{ background:var(--paper-line); color:var(--ink-soft); cursor:not-allowed; }
+  .btn-ghost{ background:none; border:1px solid var(--ink-soft); color:var(--ink); }
+
+  /* ---------- Intro / ending / reflection ---------- */
+  .lede{ font-size:16px; max-width:62ch; }
+  .cast{
+    display:grid; grid-template-columns:1fr 1fr; gap:14px;
+    margin:16px 0 4px;
+  }
+  @media (max-width:520px){ .cast{ grid-template-columns:1fr; } }
+  .cast .who{
+    background:var(--paper-dark);
+    border-radius:3px;
+    padding:12px 14px;
+  }
+  .cast .who strong{ display:block; margin-bottom:3px; font-size:14.5px; }
+  .cast .who span{ font-size:13px; color:var(--ink-soft); }
+
+  .chart-wrap{ margin:14px 0 4px; }
+  .insight{
+    margin-top:14px;
+    padding:12px 14px;
+    background:var(--paper-dark);
+    border-radius:3px;
+    font-size:14.5px;
+  }
+
+  .hr-block{ margin-bottom:22px; }
+  .hr-block h3{ font-size:17px; margin:0 0 8px; }
+  .checklist{ display:flex; flex-direction:column; gap:8px; margin:10px 0 4px; }
+  .checklist label{
+    display:flex; gap:10px; align-items:flex-start;
+    font-size:14.5px;
+    background:var(--paper-dark);
+    border-radius:3px;
+    padding:10px 12px;
+  }
+  .checklist input{ margin-top:3px; }
+  .tally{ font-size:13px; color:var(--ink-soft); margin-top:4px; }
+
+  textarea{
+    width:100%;
+    min-height:90px;
+    font-family:inherit;
+    font-size:14.5px;
+    padding:10px 12px;
+    border:1px solid var(--paper-line);
+    border-radius:3px;
+    background:var(--paper-dark);
+    color:var(--ink);
+    resize:vertical;
+  }
+  label.field-label{ display:block; font-size:13.5px; color:var(--ink-soft); margin-bottom:6px; }
+
+  .print-footer{ margin-top:26px; display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; }
+
+  .credit{
+    margin-top:30px;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    border-top:1px solid var(--paper-line);
+    padding-top:12px;
+  }
+
+  @media print{
+    .theme-toggle, .no-print, .actions, .print-footer{ display:none !important; }
+    body{ background:#fff; }
+    .panel, .dash{ border:1px solid #999; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="masthead">
+    <div class="seal">稱</div>
+    <div class="masthead-text">
+      <p class="kicker">原載 大正十五年‧臺灣民報　改編互動學習遊戲</p>
+      <h1>一桿稱仔：救援秦得參</h1>
+      <p class="subtitle">走過秦得參的一生，親手守住那把本該公正的稱仔</p>
+    </div>
+    <button class="theme-toggle no-print" id="themeToggle" type="button">切換深／淺色</button>
+  </header>
+
+  <div id="screen-root"></div>
+
+  <p class="credit">
+    內容改編自賴和〈一桿「稱仔」〉（1926，臺灣民報）。遊戲機制構想參考江伊薇老師「救援秦得參：人權桌遊的教育實踐」（2025未來教育臺灣100）之五維目標卡設計，並改作為課堂數位互動學習版本，供國文課教學使用。
+  </p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- Theme ---------------- */
+  var themeBtn = document.getElementById("themeToggle");
+  function applyTheme(t){
+    document.documentElement.setAttribute("data-theme", t);
+    try{ localStorage.setItem("qc-theme", t); }catch(e){}
+  }
+  (function initTheme(){
+    var saved = null;
+    try{ saved = localStorage.getItem("qc-theme"); }catch(e){}
+    if(saved) applyTheme(saved);
+  })();
+  themeBtn.addEventListener("click", function(){
+    var cur = document.documentElement.getAttribute("data-theme");
+    var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+    var next;
+    if(cur === "dark") next = "light";
+    else if(cur === "light") next = "dark";
+    else next = prefersDark ? "light" : "dark";
+    applyTheme(next);
+  });
+
+  /* ---------------- Game data ---------------- */
+  var DIMS = [
+    {key:"情感", label:"情感"},
+    {key:"經濟", label:"經濟"},
+    {key:"健康", label:"健康"},
+    {key:"尊嚴", label:"尊嚴"},
+    {key:"處境", label:"社會處境"}
+  ];
+
+  var START = {情感:-1, 經濟:-2, 健康:0, 尊嚴:-1, 處境:-2};
+
+  var STAGES = [
+    {
+      tag:"第一關　身世坎坷",
+      narrative:
+        "鎮南威麗村裡，住的大都是勤儉耐苦的農民，秦得參一家卻格外窮困——他出生前，父親就已經過世。母親孤苦無依，後來由鄰人做媒，招贅了一名夫婿。只是這位後父從未真心疼惜前夫的孩子，把母子倆當作機器般使喚，得參因此常常挨打受罵，日子過得並不和睦。",
+      comp:{
+        q:"村名「威麗村」的「威麗」，在課文注釋中被指出是諧音哪個詞彙，暗指日本的統治方式？",
+        options:["威力","美麗","畏懼","偉力"],
+        correct:0,
+        explain:"「威麗」諧音「威力」，暗指日本殖民政府以威權統治臺灣——作者一開始就用地名埋下了反諷的伏筆。"
+      },
+      empathy:{
+        q:"面對後父的冷落與責打，年幼的得參最可能會怎麼做？",
+        options:[
+          {label:"默默忍受，不敢反抗", canon:true},
+          {label:"向母親大聲哭訴，要她趕走後父"},
+          {label:"趁機逃家，自己想辦法謀生"}
+        ],
+        reveal:"課文只淡淡寫道，得參「不僅不能得到幸福，又多挨些打罵」。小小年紀的他沒有選擇的餘地，只能跟著母親一起捱過這段艱難歲月——這正是賴和筆下許多底層孩子共同的命運。",
+        deltas:{情感:-1, 經濟:-1}
+      },
+      altRole:"母親視角",
+      empathyAlt:{
+        q:"身為得參的母親，眼看孩子被後父冷落、責打，你最可能的反應是？",
+        options:[
+          {label:"忍氣吞聲，設法維持這個得來不易的家", canon:true},
+          {label:"挺身阻止後父，甚至不惜與他決裂"},
+          {label:"帶著孩子離開，另謀生路"}
+        ],
+        reveal:"課文沒有正面寫出母親的反抗，只說她與後夫「不十分和睦」——在那個年代，女性往往也必須隱忍，才能守住孩子的一口飯吃。這也呼應了這個家在「社會處境」這一項上，始終難以翻身的原因。"
+      }
+    },
+    {
+      tag:"第二關　贌田無門",
+      narrative:
+        "十六歲那年，得參想辭去長工，自己贌一塊田耕種，卻發現田地早被製糖會社哄抬租金搶光了。他不甘心去會社做牛馬般的蔗工，只好每天做零工維生。靠著自己的力氣與母親的刻苦持家，攢下的錢終於在十八歲那年，讓他娶了一位能幹的妻子。",
+      comp:{
+        q:"得參之所以贌不到田地，課文點出的關鍵原因是？",
+        options:["他不會耕作","製糖會社哄抬地租，業主寧可贌給會社","他沒有戶籍","田地全部休耕"],
+        correct:1,
+        explain:"製糖會社利益龐大，向業主爭贌田地、不惜加租，業主自然捨棄一般農民——這正是日本殖民政府扶植製糖會社剝削臺灣農民的縮影。"
+      },
+      empathy:{
+        q:"一次次贌田落空，如果是你，會怎麼辦？",
+        options:[
+          {label:"咬牙去會社做蔗工，至少有收入"},
+          {label:"寧可做零工，靠自己的力氣慢慢存錢", canon:true},
+          {label:"乾脆離開家鄉，到外地重新開始"}
+        ],
+        reveal:"得參選擇了最後一條辛苦卻保有自主的路：因他氣力大、做事勤敏，每天都有人請他做零工；加上母親刻儉持家，三年後終於存夠了娶妻的錢。",
+        deltas:{情感:2, 經濟:1}
+      },
+      altRole:"母親視角",
+      empathyAlt:{
+        q:"得參屢次贌田落空，母親卻教他「辭去長工」，寧可讓他做不穩定的零工，你覺得原因是？",
+        options:[
+          {label:"想讓兒子留在身邊幫忙家務"},
+          {label:"不忍兒子像牛馬一樣被會社長期使喚，寧可辛苦也要他保有自主與尊嚴", canon:true},
+          {label:"單純想省下長工的伙食開銷"}
+        ],
+        reveal:"課文寫道：「若做會社的勞工呢，有同牛馬一樣，他母親又不肯。」比起穩定的收入，母親更在意兒子不被當成牲口使喚——這份堅持，也悄悄為得參日後的性格埋下伏筆。"
+      }
+    },
+    {
+      tag:"第三關　添丁喪母",
+      narrative:
+        "二十一歲，妻子為得參生下一個男孩，母親終於露出久違的笑容——她覺得自己做母親的責任已經完成了。只是二十年的勞苦早已耗盡她的身體，不久後便因病去世。得參才剛嘗到初為人父的喜悅，幸福卻又隨著母親的離世一同消逝。",
+      comp:{
+        q:"秦母為什麼在抱了孫子之後，覺得自己「責任已盡」？",
+        options:["她存夠了養老金","她看著得參完成了娶妻生子的終身大事","她把得參過繼給別人","她準備去當長工"],
+        correct:1,
+        explain:"在傳統觀念裡，撫養孩子、幫他娶妻生子被視為母親的終身任務；秦母看見孫子出生，才覺得自己的責任總算走到了盡頭。"
+      },
+      empathy:{
+        q:"你覺得這時候的得參，心情比較接近哪一種？",
+        options:[
+          {label:"喜悅與哀傷同時湧上心頭，不知如何自處", canon:true},
+          {label:"因為有了兒子，很快就走出喪母之痛"},
+          {label:"全心投入工作，刻意不去想母親的事"}
+        ],
+        reveal:"小說寫道：「可憐的得參，他的幸福，已和他慈愛的母親，一併失去。」作者用這一喜一悲的並置，暗示了得參接下來更深沉的不幸氛圍。",
+        deltas:{情感:-2, 處境:-1}
+      },
+      altRole:"妻子視角",
+      empathyAlt:{
+        q:"身為得參剛生產完的妻子，婆婆卻在這時驟然離世，你最可能怎麼做？",
+        options:[
+          {label:"強忍悲傷，一肩扛起照顧新生兒與操持家務的重擔", canon:true},
+          {label:"把孩子托給娘家照顧，自己回去好好服喪一段時間"},
+          {label:"要求得參多請人手幫忙，自己什麼都不做"}
+        ],
+        reveal:"課文雖未著墨妻子當下的心情，但從此後她必須一人扛起家務、甚至兩度典當金花，可以推知：在那個年代，女性往往被期待默默撐起一切，少有喘息的空間。"
+      }
+    },
+    {
+      tag:"第四關　積勞成疾",
+      narrative:
+        "隔年又添了個女兒，家裡的負擔更重，得參只好加倍工作。長年的辛勞讓他在二十多歲時染上瘧疾，三天的工資還不夠付一服西藥，他只能忍痛改煎不用錢的青草與便宜的漢藥。病情時好時壞，拖了好幾個月，肚子卻愈來愈腫脹。",
+      comp:{
+        q:"得參捨棄西醫、改吃「不用錢的青草」，反映了當時什麼樣的現實？",
+        options:["他比較相信傳統醫療","窮人沒有生病的權利，付不起昂貴的醫藥費","青草比西藥更有效","他想省錢娶二房"],
+        correct:1,
+        explain:"課文特別點出三天工作還買不起一服藥，赤裸裸呈現底層人民即使生病，也往往負擔不起醫藥費的殘酷現實。"
+      },
+      empathy:{
+        q:"若是你，在沒錢又必須養家的情況下，面對生病會怎麼做？",
+        options:[
+          {label:"硬撐著下田工作，等病自己好", canon:true},
+          {label:"向親友借錢，無論如何先把病治好"},
+          {label:"讓妻子一人扛起所有農事，自己安心休養"}
+        ],
+        reveal:"得參正是這樣咬牙撐著——「亦即耐苦到田裡去」，直到腹部脹得很厲害，仍捨不得多花一次看診的錢。健康，在貧窮面前成了最先被犧牲的東西。",
+        deltas:{健康:-2, 經濟:-1}
+      },
+      altRole:"妻子視角",
+      empathyAlt:{
+        q:"眼看丈夫因過勞病倒，卻仍撐著下田，身為妻子的你最可能怎麼做？",
+        options:[
+          {label:"一邊持家、一邊想辦法多賺點錢貼補醫藥費", canon:true},
+          {label:"堅持拿出所有積蓄，逼他去看西醫"},
+          {label:"讓他自己決定，不多過問"}
+        ],
+        reveal:"得參病倒期間，「他妻子不能不出門去工作」，一家人甚至陷入營養不良。連對丈夫健康的擔憂，都被眼前的生存壓力擠壓到最後——貧窮奪走的，不只是看病的錢。"
+      }
+    },
+    {
+      tag:"第五關　籌謀過年",
+      narrative:
+        "年關將近卻找不到工作，得參又急又怕。聽說鎮上賣菜的生意不錯，他想試試，無奈身上沒有本錢，又不好意思開口向人借貸。幸好妻子回娘家一趟，嫂子體諒她的處境，把自己唯一的金花飾品借來典當，湊出了一點資本。為了不觸犯嚴苛的度量衡規定，妻子還特地到鄰居家借了一桿「尚覺新新」的稱仔。",
+      comp:{
+        q:"得參賣菜的本錢「金花」，是用什麼方式籌到的？",
+        options:["向銀行貸款","妻子向娘家嫂子借金花去典當","賣掉家裡的田地","跟巡警申請補助"],
+        correct:1,
+        explain:"娘家嫂子雖不富裕，仍願意把自己僅有的飾品借出來救急，這份親情的溫暖，和後面稱仔遭到的對待形成強烈對比。"
+      },
+      empathy:{
+        q:"妻子特地借了一桿「新的」稱仔，而不是隨便找一把舊的，你覺得原因是？",
+        options:[
+          {label:"新的稱仔比較好看，做生意有面子"},
+          {label:"擔心舊稱仔刻度不準，觸犯嚴苛的度量衡規定被巡警找麻煩", canon:true},
+          {label:"她想試用看看新式的度量工具"}
+        ],
+        reveal:"課文描述當時「通行取締、度量衡規紀」等法令多如牛毛，稍有不慎就可能被安上罪名。妻子的謹慎，其實是長年活在高壓統治下練就的求生本能。",
+        deltas:{情感:2, 經濟:1}
+      },
+      altRole:"嫂子視角",
+      empathyAlt:{
+        q:"身為得參妻子的嫂子，面對妹婿一家過年卻愁無本錢的困境，你最可能怎麼做？",
+        options:[
+          {label:"把自己僅有的金花借出去，幫襯娘家人度過難關", canon:true},
+          {label:"愛莫能助，畢竟自己家也不寬裕"},
+          {label:"建議他們去向鎮上的有錢人借貸"}
+        ],
+        reveal:"課文寫妻子「總難得她嫂子，待她還好」——這份雪中送炭的情誼，是貧困生活裡難得的溫暖，也是「情感」這一項能稍稍回升的原因。"
+      }
+    },
+    {
+      tag:"第六關　剪花布的父親",
+      narrative:
+        "賣菜幾天後，生意漸有起色。得參一邊盤算著該先贖回金花，一邊卻忍不住想到孩子——過年若沒件新衣，總覺得自己這個做父親的，有點說不過去。他把幾天賺來的錢，剪了幾尺花布，給孩子們做新衣裳。",
+      comp:{
+        q:"課文描述當時「通行取締、度量衡規紀」等規定「舉凡日常生活中的一舉一動，通在法的干涉、取締範圍中」，這段文字主要在說明什麼？",
+        options:["臺灣人民生活富足","殖民政府以繁瑣嚴苛的法令全面控制人民生活","當時交通建設十分發達","臺灣人普遍知法守法"],
+        correct:1,
+        explain:"作者藉由羅列各種法規，點出日本殖民政府利用巨細靡遺又不合理的規定，讓人民動輒得咎、處處受制。"
+      },
+      empathy:{
+        q:"手頭的錢不多，若是你，會優先做什麼？",
+        options:[
+          {label:"先把金花贖回來，了卻心頭大事"},
+          {label:"先讓孩子過個開心年，金花的事晚點再說", canon:true},
+          {label:"兩件事都先緩一緩，把錢存起來"}
+        ],
+        reveal:"得參雖然心裡也記掛著金花，仍對妻子說：「今天才廿五，那筆錢不怕賺不來。」他剪花布給孩子，展現出一位即使貧困，仍捨不得讓孩子失望的父親形象。",
+        deltas:{情感:1}
+      },
+      altRole:"妻子視角",
+      empathyAlt:{
+        q:"手頭的錢不多，看著丈夫打算先給孩子做新衣，身為妻子的你最可能怎麼做？",
+        options:[
+          {label:"忍不住提醒他，該先贖回金花才是正事", canon:true},
+          {label:"完全贊同，孩子的笑容比什麼都重要"},
+          {label:"堅持把錢存起來，什麼都先別買"}
+        ],
+        reveal:"課文寫妻子「忍不住，勸他說：剩下的錢積積下，待贖取那金花，不是更要緊嗎？」她務實的提醒，和得參感性的父愛形成對比，也讓我們看見這個小家庭裡，夫妻各自扛著不同的焦慮。"
+      }
+    },
+    {
+      tag:"第七關　稱仔事件",
+      narrative:
+        "市場上，一名巡警走到得參的菜擔前，殷勤地問起價錢，實則是想討些便宜。老實的得參不懂這套潛規則，秤了花菜後還主動少算了二兩，想讓巡警滿意。沒想到巡警反而惱羞成怒，硬說稱仔「不堪用了」，當場把它打斷擲棄，還記下得參的姓名住處，氣沖沖地回了警署。",
+      comp:{
+        q:"巡警佯裝買菜，真正的目的其實是？",
+        options:["想試試稱仔準不準","想要得參把菜白白奉送給他","想檢查度量衡法規","想找人聊天"],
+        correct:1,
+        explain:"巡警常藉著這種「交關」的名義白拿百姓財物；得參按規矩算錢、甚至主動優惠，反而讓巡警找不到台階下，惱羞成怒。"
+      },
+      empathy:{
+        q:"稱仔被打斷的那一刻，你覺得得參心裡最接近哪一種感受？",
+        options:[
+          {label:"錯愕又憤怒，卻又不敢當場反抗", canon:true},
+          {label:"害怕被抓，立刻跪地求饒"},
+          {label:"覺得無所謂，反正稱仔壞了再借一支就好"}
+        ],
+        reveal:"小說寫道，得參「空抱著滿腹的憤恨，在擔邊失神地站著」。這把被打斷的稱仔，正是公理與正義被執法者親手毀棄的象徵。",
+        deltas:{尊嚴:-3, 經濟:-1}
+      },
+      altRole:"巡警視角",
+      empathyAlt:{
+        q:"若你是那名靠搜索百姓小過錯來衝業績的基層巡警，面對老實的得參主動少算你二兩菜錢，你最可能怎麼做？",
+        options:[
+          {label:"因為討便宜的算盤落空而惱羞成怒，硬說稱仔不準大做文章", canon:true},
+          {label:"坦然收下優惠，道謝離開"},
+          {label:"堅持付清原價，不占百姓便宜"}
+        ],
+        reveal:"課文寫他「變色」「赫怒」——在這套鼓勵巡警「找碴立功」的制度下，連一次小小的善意，都可能被扭曲成整人的藉口。問題不只在這名巡警個人，更在那套逼人作惡的制度。"
+      }
+    },
+    {
+      tag:"第八關　眾人的沉默",
+      narrative:
+        "巡警走遠後，幾個圍觀的閒人才圍上前來。一位年紀較長的人說：「該死的東西，到市上來，只這規紀亦就不懂？」竟是在責怪得參不懂得巡警白拿財物的「潛規則」。眾人議論了一陣，也就各自散去。回到家，得參悶悶不說一句話，直到妻子殷勤探問，才把事情告訴她。妻子只能安慰他：「寬心罷！」",
+      comp:{
+        q:"那位年長閒人說得參「這規紀亦就不懂」，這句話反映了當時百姓怎樣的普遍心態？",
+        options:["大家都很同情得參","民眾對巡警的欺壓已習以為常、傾向息事寧人","民眾打算聯合起來抗議","大家都不認識得參"],
+        correct:1,
+        explain:"旁人沒有替得參打抱不平，反而暗示他該懂得「潛規則」，顯示長期的高壓統治，已讓許多百姓選擇隱忍順從以求自保。"
+      },
+      empathy:{
+        q:"被巡警打斷稱仔、當眾羞辱之後，身為得參的你，心裡最可能是什麼感受？",
+        options:[
+          {label:"既憤怒又委屈，卻不敢當場發作", canon:true},
+          {label:"覺得是自己不懂規矩，理應受罰"},
+          {label:"完全不放在心上，很快就忘了"}
+        ],
+        reveal:"得參「空抱著滿腹的憤恨，在擔邊失神地站著」，回家後更是「悶悶地一句話不說」——這份有苦難言的委屈，比起肉體或財物的損失，更深深刺痛著他的尊嚴。",
+        deltas:{情感:1, 處境:-1}
+      },
+      altRole:"旁觀者視角",
+      empathyAlt:{
+        q:"如果你當時就在市場，親眼看到巡警打斷得參的稱仔，你最可能怎麼做？",
+        options:[
+          {label:"像那些閒人一樣，議論幾句後就散去"},
+          {label:"上前安慰得參，但不敢公開指責巡警", canon:true},
+          {label:"當場大聲斥責巡警的不公"}
+        ],
+        reveal:"課文中沒有人挺身仗義執言，真正給得參安慰的，只有回家後妻子的一句「寬心罷」。社會的集體沉默，與家庭裡微小的溫暖，形成鮮明對比。"
+      }
+    },
+    {
+      tag:"第九關　除夕的羞辱與審判",
+      narrative:
+        "除夕當天，得參又在市場遇到那名巡警，竟劈頭就罵他「畜生」，還把他押往衙門。法官問案時，得參三次喊冤，法官卻只憑巡警的報告判他違犯度量衡規則，科罰三塊錢，否則就得坐監三天。得參捨不得花這筆年關要用的錢，寧可入獄。妻子得知消息，急得只能哭，最後把僅有的金花再次典當，湊錢把他贖了出來。",
+      comp:{
+        q:"法官面對得參再三喊冤，仍判他有罪，這樣的情節凸顯了什麼現象？",
+        options:["法官辦案十分嚴謹公正","官官相護、罔顧事實真相的司法亂象","得參真的犯了罪","法律保障了人民的權利"],
+        correct:1,
+        explain:"法官只憑巡警片面的報告，完全不理會得參的辯白，正是作者要控訴的「法令失衡失準」與執法者沆瀣一氣的現實。"
+      },
+      empathy:{
+        q:"除夕被巡警當眾罵「畜生」，又被押赴衙門，面對法官仍判你有罪，身為得參的你，心裡最可能是？",
+        options:[
+          {label:"滿心冤屈，卻又無力撼動官官相護的體制", canon:true},
+          {label:"覺得法官說得有理，甘願認罰"},
+          {label:"打算當庭反抗，拒絕接受判決"}
+        ],
+        reveal:"得參三次喊冤，法官卻只淡淡回應：「巡警的報告，總沒有錯啊！」這份有理說不清的無力感，正是作者要控訴的司法不公。",
+        deltas:{尊嚴:-2, 經濟:-2, 處境:-2}
+      },
+      altRole:"妻子視角",
+      empathyAlt:{
+        q:"得參的妻子再次典當僅有的金花，只為了贖回丈夫，這個舉動最能反映什麼？",
+        options:[
+          {label:"夫妻情深，但身為女性的她也只能靠變賣自身僅有的財物來救人，處境依然被動", canon:true},
+          {label:"當時社會制度有完善的救助管道，她只是多一個選擇"},
+          {label:"她原本就不缺錢，典當金花只是順手之舉"}
+        ],
+        reveal:"「有誰可央託，有誰能為她奔走？」妻子除了哭、除了典當自己僅有的飾物，別無他法。這一幕，也讓我們看見當時女性在經濟與社會上普遍依附、少有自主空間的處境。"
+      }
+    },
+    {
+      tag:"第十關　除夕夜的覺悟",
+      narrative:
+        "圍爐過後，孩子們已安穩入睡，得參卻在屋裡來回踱步，心中漫著一股說不清的悲哀。他喃喃自語：「人不像人，畜生，誰願意做。這是什麼世間？活著倒不若死了快樂。」他忽然想起母親臨終時那張滿足快樂的容貌……這一夜，他已懷抱著最後的覺悟。元旦，街坊間忽然傳開一陣驚叫哀鳴——市上也盛傳，一名夜巡的警吏，被殺在道上。",
+      comp:{
+        q:"作者刻意把這起悲劇安排在本該闔家團圓的除夕夜，這樣的安排有什麼效果？",
+        options:["方便讀者記得日期","以歡樂團圓的氣氛反襯悲劇，使哀傷更顯強烈","純屬巧合，沒有特別用意","讓故事看起來比較長"],
+        correct:1,
+        explain:"除夕本該是闔家歡聚、辭舊迎新的時刻，作者卻讓悲劇在此刻爆發，透過時節與事件的強烈反差，把壓抑已久的悲哀與抗議推到最高點。"
+      },
+      empathy:{
+        q:"走到這一步，你覺得得參心裡想的最可能是什麼？",
+        options:[
+          {label:"與其像畜生一樣忍辱偷生，不如用自己的方式奪回最後的尊嚴", canon:true},
+          {label:"打算隔天去向法官申訴，討回公道"},
+          {label:"決定舉家搬遷，遠離這個傷心地"}
+        ],
+        reveal:"小說沒有直接寫出結局，只用元旦的哀鳴與街上盛傳的消息側面暗示——得參選擇了與巡警同歸於盡。賴和在後記中說，這樣的事「不一定在未開的國裡，凡強權行使的地上，總會發生」，這正是他寫下這篇小說最沉痛的控訴。",
+        deltas:{}
+      },
+      altRole:"妻子視角",
+      empathyAlt:{
+        q:"除夕夜，看著丈夫反常地沉默踱步、不停嘆息，身為妻子的你最可能怎麼做？",
+        options:[
+          {label:"幾次出聲關心，卻怎麼也問不出個所以然", canon:true},
+          {label:"猜到他心裡在想什麼，整夜陪著他"},
+          {label:"覺得他只是太累了，先去睡覺"}
+        ],
+        reveal:"課文寫道：「經他妻子幾次的催促，他總沒有聽見似的。」賴和沒有明寫妻子那晚的心情，只用元旦傳來的驚叫哀鳴側寫結局——這份留白，也讓讀者在想像中感受到更深的悲哀。"
+      }
+    }
+  ];
+
+  /* ---------------- State ---------------- */
+  var state = {
+    screen: "intro",
+    stageIndex: 0,
+    stats: Object.assign({}, START),
+    history: { 尊嚴:[START.尊嚴] },
+    compAnswered: false,
+    empathyAnswered: false,
+    score: 0,
+    hrChecked: []
+  };
+
+  function clamp(v){ return Math.max(-5, Math.min(5, v)); }
+
+  var root = document.getElementById("screen-root");
+
+  /* ---------------- Shared renderers ---------------- */
+  function renderDash(){
+    var rows = DIMS.map(function(d){
+      var v = state.stats[d.key];
+      var pct = Math.abs(v) / 5 * 50;
+      var left = v >= 0 ? 50 : (50 - pct);
+      var color = v >= 0 ? "var(--positive)" : "var(--negative)";
+      return (
+        '<div class="stat-row">' +
+          '<div class="stat-label">' + d.label + '</div>' +
+          '<div class="stat-track">' +
+            '<div class="center-line"></div>' +
+            '<div class="stat-fill" style="left:' + left + '%;width:' + pct + '%;background:' + color + ';"></div>' +
+          '</div>' +
+          '<div class="stat-value">' + (v > 0 ? "+" : "") + v + '</div>' +
+        '</div>'
+      );
+    }).join("");
+    return (
+      '<div class="dash">' +
+        '<p class="dash-title"><span>秦得參的天秤</span><span>－5　公理盡失　／　＋5　安穩尊嚴</span></p>' +
+        rows +
+      '</div>'
+    );
+  }
+
+  function renderProgress(){
+    var dots = STAGES.map(function(_, i){
+      var cls = "dot";
+      if(i < state.stageIndex) cls += " done";
+      if(i === state.stageIndex && state.screen === "stage") cls += " current";
+      return '<span class="' + cls + '">' + (i+1) + '</span>';
+    }).join("");
+    return '<div class="progress">' + dots + '</div>';
+  }
+
+  function deltaChips(deltas){
+    var keys = Object.keys(deltas || {});
+    if(keys.length === 0) return "";
+    var chips = keys.map(function(k){
+      var v = deltas[k];
+      var cls = v >= 0 ? "up" : "down";
+      var dim = DIMS.filter(function(d){ return d.key === k; })[0];
+      var label = dim ? dim.label : k;
+      return '<span class="delta-chip ' + cls + '">' + label + ' ' + (v>0?"+":"") + v + '</span>';
+    }).join("");
+    return '<div class="delta-list">' + chips + '</div>';
+  }
+
+  /* ---------------- Screens ---------------- */
+  function renderIntro(){
+    root.innerHTML =
+      '<div class="panel">' +
+        '<p class="stage-tag">開場・人物與背景</p>' +
+        '<h2>一把本該公正的稱仔</h2>' +
+        '<p class="lede">威麗村裡，佃農秦得參一生勤懇，卻一路受著貧困、疾病與欺壓追趕。這個遊戲，讓你跟著他走過人生的十個關卡——每一關，先試著猜猜「如果是我，會怎麼做」，再看看小說裡他實際的選擇。你的每一個判斷，都會牽動他身上這把看不見的天秤。</p>' +
+        '<div class="cast">' +
+          '<div class="who"><strong>秦得參</strong><span>諧音閩南語「真的慘」，威麗村的佃農，本篇主角。</span></div>' +
+          '<div class="who"><strong>秦得參之妻</strong><span>與他同甘共苦，為了救他兩度典當娘家嫂子出借的金花。</span></div>' +
+          '<div class="who"><strong>下級巡警</strong><span>日治時期基層警察，權力極大，常藉故欺壓百姓以求升遷。</span></div>' +
+          '<div class="who"><strong>一桿稱仔</strong><span>象徵公理與正義的秤重工具，是貫穿全篇的關鍵意象。</span></div>' +
+        '</div>' +
+        renderDash() +
+        '<div class="actions">' +
+          '<button class="btn btn-primary" id="startBtn">開始遊戲</button>' +
+        '</div>' +
+      '</div>';
+    document.getElementById("startBtn").addEventListener("click", function(){
+      state.screen = "stage";
+      state.stageIndex = 0;
+      resetStageFlags();
+      render();
+    });
+  }
+
+  function resetStageFlags(){
+    state.compAnswered = false;
+    state.empathyAnswered = false;
+    state.compChoice = null;
+    state.empathyChoice = null;
+    state.perspective = null;
+  }
+
+  function renderStage(){
+    var s = STAGES[state.stageIndex];
+    var html = '';
+    html += renderProgress();
+    html += renderDash();
+    html += '<div class="panel">';
+    html += '<p class="stage-tag">' + s.tag + '　（第 ' + (state.stageIndex+1) + ' ／ ' + STAGES.length + ' 關）</p>';
+    html += '<p class="narrative">' + s.narrative + '</p>';
+
+    // comprehension block
+    html += '<div class="qblock">';
+    html += '<p class="qlabel">情節理解</p>';
+    html += '<p class="qprompt">' + s.comp.q + '</p>';
+    html += '<div class="options" id="compOptions">';
+    s.comp.options.forEach(function(opt, i){
+      html += '<button class="opt-btn" data-i="' + i + '">' + opt + '</button>';
+    });
+    html += '</div>';
+    html += '<div id="compReveal"></div>';
+    html += '</div>';
+
+    // empathy block (hidden until comp answered)
+    html += '<div class="qblock" id="empathyBlock" style="display:none;">';
+    html += '<p class="qlabel">同理抉擇</p>';
+    html += '<p class="qprompt">' + s.empathy.q + '</p>';
+    html += '<div class="options" id="empathyOptions">';
+    s.empathy.options.forEach(function(opt, i){
+      html += '<button class="opt-btn" data-i="' + i + '">' + opt.label + '</button>';
+    });
+    html += '</div>';
+    html += '<div id="empathyReveal"></div>';
+    html += '</div>';
+
+    html += '<div class="actions">';
+    html += '<button class="btn btn-primary" id="nextBtn" disabled>下一關</button>';
+    html += '</div>';
+    html += '</div>';
+
+    root.innerHTML = html;
+
+    // comprehension handlers
+    var compBtns = root.querySelectorAll("#compOptions .opt-btn");
+    compBtns.forEach(function(btn){
+      btn.addEventListener("click", function(){
+        if(state.compAnswered) return;
+        state.compAnswered = true;
+        var i = parseInt(btn.getAttribute("data-i"), 10);
+        if(i === s.comp.correct) state.score++;
+        compBtns.forEach(function(b, bi){
+          b.disabled = true;
+          if(bi === s.comp.correct) b.classList.add("correct");
+          else if(bi === i) b.classList.add("wrong");
+        });
+        document.getElementById("compReveal").innerHTML =
+          '<div class="reveal">' + s.comp.explain + '</div>';
+        document.getElementById("empathyBlock").style.display = "block";
+      });
+    });
+
+    // empathy handlers
+    var empBtns = root.querySelectorAll("#empathyOptions .opt-btn");
+    empBtns.forEach(function(btn){
+      btn.addEventListener("click", function(){
+        if(state.empathyAnswered) return;
+        state.empathyAnswered = true;
+        var i = parseInt(btn.getAttribute("data-i"), 10);
+        var chosen = s.empathy.options[i];
+        empBtns.forEach(function(b, bi){
+          b.disabled = true;
+          if(bi === i) b.classList.add("selected");
+        });
+        // apply deltas
+        Object.keys(s.empathy.deltas || {}).forEach(function(k){
+          state.stats[k] = clamp(state.stats[k] + s.empathy.deltas[k]);
+        });
+        state.history.尊嚴.push(state.stats.尊嚴);
+
+        var matchLine = chosen.canon
+          ? "你的判斷，與小說中得參實際的反應相符。"
+          : "小說中得參實際的反應，和你的判斷不太一樣——這正是文學與真實處境之間，值得我們多想一層的地方。";
+
+        document.getElementById("empathyReveal").innerHTML =
+          '<div class="reveal">' + s.empathy.reveal +
+          '<div class="match">' + matchLine + '</div>' +
+          deltaChips(s.empathy.deltas) +
+          '</div>';
+
+        // refresh dashboard
+        var dashEl = root.querySelector(".dash");
+        if(dashEl) dashEl.outerHTML = renderDash();
+
+        document.getElementById("nextBtn").disabled = false;
+      });
+    });
+
+    document.getElementById("nextBtn").addEventListener("click", function(){
+      if(state.stageIndex < STAGES.length - 1){
+        state.stageIndex++;
+        resetStageFlags();
+        render();
+      }else{
+        state.screen = "ending";
+        render();
+      }
+    });
+  }
+
+  function scoreLabel(n){
+    if(n === STAGES.length) return "滿分！對課文情節掌握得非常紮實";
+    if(n >= 8) return "掌握得不錯，只差幾個細節";
+    if(n >= 6) return "大致理解，建議再回頭讀讀答錯的段落";
+    return "建議重新閱讀課文，再玩一次加深印象";
+  }
+
+  function labelFor(v){
+    if(v <= -4) return "幾乎被徹底摧毀";
+    if(v <= -2) return "嚴重受創";
+    if(v < 0) return "持續受壓";
+    if(v === 0) return "勉強維持";
+    if(v < 3) return "略有改善";
+    return "相對安穩";
+  }
+
+  function renderEnding(){
+    var html = '';
+    html += '<div class="panel">';
+    html += '<p class="stage-tag">結局・元旦的消息</p>';
+    html += '<h2>這把稱仔，再也秤不出公理</h2>';
+    html += '<p class="lede">十個關卡走到這裡，秦得參的故事畫下了句點。來看看這一路下來，他身上這把天秤最終停在哪裡。</p>';
+    html += renderDash();
+
+    html += '<div class="insight"><strong>課文理解分數：答對 ' + state.score + ' / ' + STAGES.length + ' 題</strong>（' + scoreLabel(state.score) + '）</div>';
+
+    // final labels
+    html += '<div class="cast">';
+    DIMS.forEach(function(d){
+      html += '<div class="who"><strong>' + d.label + '</strong><span>' + labelFor(state.stats[d.key]) + '（' + state.stats[d.key] + '）</span></div>';
+    });
+    html += '</div>';
+
+    // line chart for 尊嚴
+    html += '<div class="chart-wrap">' + renderDignityChart() + '</div>';
+
+    html += '<div class="insight">你可能會發現：「情感」這一項並沒有徹底歸零——得參始終有妻兒相伴、有母親的回憶陪著他。真正把他一步步逼向絕路的，是「經濟」「健康」「尊嚴」與「社會處境」這幾項被制度性力量不斷壓垮的數值。賴和要控訴的，正是這套讓人「人不像人」的殖民體制，而不是秦得參個人的軟弱。</div>';
+
+    html += '<div class="actions">';
+    html += '<button class="btn btn-primary" id="toReflection">進入人權反思</button>';
+    html += '</div>';
+    html += '</div>';
+    root.innerHTML = html;
+
+    document.getElementById("toReflection").addEventListener("click", function(){
+      state.screen = "reflection";
+      render();
+    });
+  }
+
+  function renderDignityChart(){
+    var data = state.history.尊嚴;
+    var w = 640, h = 160, pad = 24;
+    var innerW = w - pad*2, innerH = h - pad*2;
+    var n = data.length;
+    function x(i){ return pad + (n === 1 ? innerW/2 : (innerW * i / (n-1))); }
+    function y(v){ return pad + innerH * (1 - (v + 5) / 10); }
+    var points = data.map(function(v,i){ return x(i) + "," + y(v); }).join(" ");
+    var zeroY = y(0);
+    var dots = data.map(function(v,i){
+      return '<circle cx="' + x(i) + '" cy="' + y(v) + '" r="3.4" fill="var(--seal)"></circle>';
+    }).join("");
+    return (
+      '<svg viewBox="0 0 ' + w + ' ' + h + '" width="100%" height="auto" role="img" ' +
+      'aria-label="尊嚴值隨關卡變化的折線圖，起點約為負一，第七關後急遽下降到負五並維持到結局">' +
+        '<line x1="' + pad + '" y1="' + zeroY + '" x2="' + (w-pad) + '" y2="' + zeroY + '" stroke="var(--paper-line)" stroke-dasharray="4 4"/>' +
+        '<polyline points="' + points + '" fill="none" stroke="var(--indigo)" stroke-width="2.4"/>' +
+        dots +
+      '</svg>' +
+      '<p class="tally">尊嚴值的起伏：從開場的隱忍，到稱仔被打斷、除夕被捕審判後急遽崩落，再未回升。</p>'
+    );
+  }
+
+  var HR_OPTIONS = [
+    "工作權與基本經濟生存的保障",
+    "生病時獲得醫療照護的權利",
+    "不受任意逮捕、羞辱與人身侵害的自由",
+    "接受公正、不偏頗審判的權利",
+    "作為一個人應有的尊嚴，不被當作「畜生」對待",
+    "身為女性，在家庭與社會中擁有自主決定的空間"
+  ];
+
+  function renderReflection(){
+    var checklistHtml = HR_OPTIONS.map(function(opt, i){
+      var checked = state.hrChecked.indexOf(i) >= 0 ? "checked" : "";
+      return '<label><input type="checkbox" data-i="' + i + '" ' + checked + '>' + opt + '</label>';
+    }).join("");
+
+    var html = '';
+    html += '<div class="panel hr-block">';
+    html += '<p class="stage-tag">人權反思・一</p>';
+    html += '<h2>秦得參被剝奪了哪些基本人權？</h2>';
+    html += '<p class="tally">課文理解分數：答對 ' + state.score + ' / ' + STAGES.length + ' 題</p>';
+    html += '<p class="lede">聯合國〈世界人權宣言〉與〈兩公約〉（公民與政治權利國際公約、經濟社會文化權利國際公約）主張：不分種族、性別、宗教、政治立場、社會地位或財產，每個人都享有從個人自身到與社會互動的一切基本權利。對照秦得參的遭遇，請勾選你認為他被剝奪的項目：</p>';
+    html += '<div class="checklist" id="hrChecklist">' + checklistHtml + '</div>';
+    html += '<p class="tally" id="hrTally"></p>';
+    html += '</div>';
+
+    html += '<div class="panel hr-block">';
+    html += '<p class="stage-tag">人權反思・二</p>';
+    html += '<h2>現代的秦得參，會是誰？</h2>';
+    html += '<p class="lede">無論古今中外，弱勢者遭受欺壓的處境始終存在。想一想：今天的社會裡，誰可能正面臨和秦得參相似的處境？</p>';
+    html += '<label class="field-label" for="modernInput">我認為「現代的秦得參」可能是……（可以寫身分、處境，或你看過的新聞事件）</label>';
+    html += '<textarea id="modernInput" placeholder="例如：遭受職場剝削卻投訴無門的移工、被房東任意驅趕的租屋弱勢者……"></textarea>';
+    html += '</div>';
+
+    html += '<div class="panel hr-block">';
+    html += '<p class="stage-tag">人權反思・三　仿「寫信馬拉松」</p>';
+    html += '<h2>為他寫一段聲援的話</h2>';
+    html += '<p class="lede">國際特赦組織每年舉辦「寫信馬拉松」，邀請大眾為世界各地人權受侵害的人們寫信發聲。請選定一位你知道的受害者或處境（可以是新聞人物、歷史事件，或你剛剛寫下的「現代秦得參」），寫下一段你想對他說的聲援文字。</p>';
+    html += '<label class="field-label" for="letterWho">我想寫給：</label>';
+    html += '<textarea id="letterWho" style="min-height:48px" placeholder="他的國籍、名字或身分"></textarea>';
+    html += '<label class="field-label" for="letterStory" style="margin-top:10px;">他的故事：</label>';
+    html += '<textarea id="letterStory" placeholder="簡述他所遭遇的事件"></textarea>';
+    html += '<label class="field-label" for="letterSay" style="margin-top:10px;">我想說：</label>';
+    html += '<textarea id="letterSay" placeholder="說明你為什麼想聲援他，以及希望他的境遇能獲得什麼改善"></textarea>';
+    html += '</div>';
+
+    html += '<div class="print-footer">';
+    html += '<button class="btn btn-ghost no-print" id="backToEnding">回到結局畫面</button>';
+    html += '<button class="btn btn-primary no-print" id="printBtn">列印／匯出這份學習單</button>';
+    html += '</div>';
+
+    root.innerHTML = html;
+
+    var tallyEl = document.getElementById("hrTally");
+    function updateTally(){
+      tallyEl.textContent = "已勾選 " + state.hrChecked.length + " / " + HR_OPTIONS.length + " 項";
+    }
+    updateTally();
+
+    root.querySelectorAll('#hrChecklist input[type="checkbox"]').forEach(function(cb){
+      cb.addEventListener("change", function(){
+        var i = parseInt(cb.getAttribute("data-i"), 10);
+        var idx = state.hrChecked.indexOf(i);
+        if(cb.checked && idx < 0) state.hrChecked.push(i);
+        if(!cb.checked && idx >= 0) state.hrChecked.splice(idx, 1);
+        updateTally();
+      });
+    });
+
+    document.getElementById("backToEnding").addEventListener("click", function(){
+      state.screen = "ending";
+      render();
+    });
+    document.getElementById("printBtn").addEventListener("click", function(){
+      window.print();
+    });
+  }
+
+  function render(){
+    if(state.screen === "intro") renderIntro();
+    else if(state.screen === "stage") renderStage();
+    else if(state.screen === "ending") renderEnding();
+    else if(state.screen === "reflection") renderReflection();
+    window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
